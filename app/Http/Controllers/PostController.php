@@ -4,6 +4,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use App\Post;
+use Session;
 
 class PostController extends Controller {
 
@@ -14,7 +16,11 @@ class PostController extends Controller {
 	 */
 	public function index()
 	{
-		//
+		// Create a veriable and store all the blog posts in it from the database
+		$posts = Post::all();
+
+		//return a view and pass in the above variables
+		return view('posts.index')->withPosts($posts);
 	}
 
 	/**
@@ -32,9 +38,24 @@ class PostController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(Request $request)
 	{
-		//
+		//validate the data
+		$this->validate($request, array(
+				'title' => 'required|max:255',
+				'body' => 'required'
+		));
+
+		//Succesfully store in the database
+		$post = new Post;
+		$post->title = $request->title;
+		$post->body = $request->body;
+
+		$post->save();
+
+		Session::flash('success', 'The Blog post was successfully saved!');
+		//redirect to another page
+		return redirect()->route('posts.show', $post->id);
 	}
 
 	/**
@@ -45,7 +66,8 @@ class PostController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$post = Post::find($id);
+		return view('posts.show')->withPost($post);
 	}
 
 	/**
@@ -56,7 +78,11 @@ class PostController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+		// Find the post in the database and save in the veriable
+		$post = Post::find($id);
+
+		//Return the view and pass in the variable 
+		return view('posts.edit')->withPost($post);
 	}
 
 	/**
