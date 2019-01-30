@@ -10,6 +10,9 @@
 
 
     <div class="container">
+
+      {{ Auth::check() ? "Logged In" : "Logged Out" }}
+
       @yield('content')
 
       @include('partials._footer')

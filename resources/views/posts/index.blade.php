@@ -5,6 +5,11 @@
 @section('content')
 
 	<div class="row">
+		@if (Session::has('success'))
+			<div class="alert alert-success" role="alert">
+				<strong>Success:</strong>{{ Session::get('success') }}
+			</div>
+		@endif
 		<div class="col-md-10">
 			<h1>All Posts</h1>
 		</div>
@@ -36,6 +41,10 @@
 					@endforeach
 				</tbody>
 			</table>
+
+			<div class="text-center">
+				{!! $posts->appends(Input::except('page'))->render() !!}
+			</div>
 		</div>
 	</div>
 
