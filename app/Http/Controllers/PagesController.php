@@ -5,11 +5,13 @@
 		#compile or processdata from the model if needed
 		#pass that data to the correct view
 namespace App\Http\Controllers;
+use App\Post;
 
 class PagesController extends Controller {
 
 	public function getIndex() {
-		return view('pages.welcome');
+		$post = Post::orderBy('created_at', 'desc')->limit(4)->get();
+		return view('pages.welcome')->withPosts($post);
 	}
 
 	public function getAbout() {

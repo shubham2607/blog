@@ -17,7 +17,7 @@ class PostController extends Controller {
 	public function index()
 	{
 		// Create a veriable and store all the blog posts in it from the database
-		$posts = Post::all();
+		$posts = Post:: orderBy('id', 'desc')->paginate(10);
 
 		//return a view and pass in the above variables
 		return view('posts.index')->withPosts($posts);
@@ -91,9 +91,26 @@ class PostController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Request $request, $id)
 	{
-		//
+		// Validate the data
+		$this->validate($request, array(
+			'title' => 'required|max:255',
+			'body' => 'required'
+		));
+
+		//Save data to the database
+		$post = Post::find($id);
+		$post->title = $request->input('title');
+		$post->body = $request->input('body');
+
+		$post->save();
+
+		// set flash data with success message
+		Session::flash('success', 'The Blog post was successfully updated!');
+
+		//redirect with flash data to post.show
+		return redirect()->route('posts.show', $post->id);
 	}
 
 	/**
@@ -104,7 +121,11 @@ class PostController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		//
+		$post = Post::Find($id);
+		$post->delete();
+
+		Session::flash('success', 'The Blog post was successfully deleted!');
+		return redirect()->route('posts.index');
 	}
 
 }
